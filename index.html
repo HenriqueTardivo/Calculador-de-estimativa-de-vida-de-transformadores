@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Calculador</title>
+    <style>
+      .center_div {
+        margin: 0 auto;
+        width: 80%; /* value of your choice which suits your alignment */
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <nav class="navbar sticky-top navbar-light bg-light">
+      <img src="IMG/logo.png" alt="Estimativa de Vida" />
+      <a class="navbar-brand" href="#">TARDIVO</a>
+    </nav>
+    <center><b>Cálculo de temperatura de transformadores</b></center>
+
+    <div class="center_div" id="app">
+      kVA
+      <input class="form-control" v-model="XKVA1" placeholder="edit me" /><br />
+      Temperatura base
+      <input class="form-control" v-model="TKVA1" placeholder="edit me" /><br />
+      PW (Watts)
+      <input class="form-control" v-model="PW" placeholder="edit me" /><br />
+      PE (Watts)
+      <input class="form-control" v-model="PE" placeholder="edit me" /><br />
+      PS (Watts)
+      <input class="form-control" v-model="PS" placeholder="edit me" /><br />
+      PR(Watts)
+      <input class="form-control" v-model="PC" placeholder="edit me" /><br />
+      2<br /><br />
+
+      kVA um por unidade
+      <input class="form-control" v-model="XKVA2" placeholder="edit me" /><br />
+      Temperatura
+      <input
+        class="form-control"
+        v-model="THKVA2"
+        placeholder="edit me"
+      /><br />
+      Aumento médio do enrolamento nominal
+      <input class="form-control" v-model="THEWA" placeholder="edit me" /><br />
+      Aumento medio em temperatura ambiente
+      <input
+        class="form-control"
+        v-model="THEHSA"
+        placeholder="edit me"
+      /><br />
+      Aumento do Ponto quente em temperatura ambiente
+      <input
+        class="form-control"
+        v-model="THETOR"
+        placeholder="edit me"
+      /><br />
+      Aumento do Oleo superior em temperatura ambiente
+      <input
+        class="form-control"
+        v-model="THEBOR"
+        placeholder="edit me"
+      /><br />
+      Temperatura ambiente
+      <input class="form-control" v-model="TAR" placeholder="edit me" /><br />
+      3<br />
+      Digite 1 para Aluminio ou 2 para Cobre <br />
+      <input class="form-control" v-model="MC" placeholder="edit me" /><br />
+      Perda por Foucault por unidade do enrolamento
+      <input
+        class="form-control"
+        v-model="PUELHS"
+        placeholder="edit me"
+      /><br />
+      Constante de tempo de enrolamento
+      <input class="form-control" v-model="TAUW" placeholder="edit me" /><br />
+      Altura do enrolamento até o local do hot spot
+      <input class="form-control" v-model="HHS" placeholder="edit me" /><br />
+      4<br />
+      Peso do Nucleo e da bobina
+      <input class="form-control" v-model="WCC" placeholder="edit me" /><br />
+      Peso do tanque
+      <input class="form-control" v-model="WTANK" placeholder="edit me" /><br />
+      Digite 1=oleo ou 2=silicone ou 3=hthc
+      <input class="form-control" v-model="MF" placeholder="edit me" /><br />
+      Volume do Fluido
+      <input
+        class="form-control"
+        v-model="GFLUID"
+        placeholder="gallons"
+      /><br />
+      5<br />
+      A sobreexcitação do núcleo ocorre durante o ciclo de carregamento? <br />
+      sim = 1 ou não = 0
+      <input class="form-control" v-model="MCORE" placeholder="edit me" /><br />
+      Tempo que a sobreexcitação ocorreu
+      <input
+        class="form-control"
+        v-model="TIMCOR"
+        placeholder="edit me"
+      /><br />
+      Perda do núcleo quando ocorre superexcitação
+      <input class="form-control" v-model="PCOE" placeholder="edit me" /><br />
+
+      <button class="btn btn-success" type="button" @click="calculateTotalLoss">
+        Send</button
+      ><br /><br /><br />
+      <p>KVA BASE FOR LOSS INPUT DATA = {{XKVA1}}</p>
+      <p>TEMPERATURE BASE FOR LOSS INPUT DATA = {{TKVA1}} C</p>
+      <p>WINDING I SQUARE R ={{PW}} WATTS</p>
+      <p>WINDING EDDY LOSS = {{PE}} WATTS</p>
+      <p>STRAY lOSSES = {{PC}} WATTS</p>
+      <p>CORE LOSS = {{PS}} WATTS</p>
+      <p>{{calculateTotalLoss}} WATTS</p>
+      <br />
+      <p>WINDING CONDUCTOR IS {{windingConductorMaterial}}</p>
+      <p>PER UNIT EDDY LOSS AT HOT SPOT LOCATION = {{PUELHS}}</p>
+      <p>WINDING TIME CONSTANT = {{TAUW}} MINUTES</p>
+      <p>PER UNIT WINDING HEIGHT TO HOT SPOT = {{HHS}}</p>
+      <p>WEIGHT OF CORE & COILS = {{WCC}} POUNDS</p>
+      <p>WEIGHT OF TANK AND FITTINGS = {{WTANK}} POUNDS</p>
+      <p>GALLONS OF FLUID = {{GFLUID}} GALLONS</p>
+      <p>COOLING FLUID IS {{coolingFluid}}</p>
+      <p>ONE PER UNIT LOAD. = {{XKVA2}} kVA</p>
+      <br />
+      <p>IEEE Std C57.91-1995 IEEE GUIDE FOR LOADING</p>
+      <p></p>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
